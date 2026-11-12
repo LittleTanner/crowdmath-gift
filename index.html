@@ -376,6 +376,11 @@ a.link { color: var(--ink); font-weight: 600; }
       scramble(el, code); confetti();
     } else { el.textContent = code; }
   }
+  // Tapping Redeem is what counts a code as used. Fire and forget so the App Store link is never delayed.
+  $("redeem").addEventListener("click", function () {
+    if (!state || !state.code) return;
+    try { fetch(API + "/redeem", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: state.token, code: state.code }) }); } catch (e) {}
+  });
   $("form").addEventListener("submit", function (e) {
     e.preventDefault();
     ask("/claim", e.target.querySelector("button"), { token: (state && state.token) || newToken() });

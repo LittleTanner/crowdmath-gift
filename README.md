@@ -42,7 +42,7 @@ The codes themselves are never stored in this repo.
 - A code is taken with a single atomic database update, so two people can never receive the same one.
 - If a code doesn't work, the page reports it and swaps in a fresh one.
 - Limits keep it fair: 4 codes per browser and 12 claims per IP per day.
-- "Given" means a code was shown to someone. Apple doesn't say which codes were redeemed, so that can't be confirmed.
+- Showing a code only holds it for that person. Tapping **Redeem in the App Store** is what counts it as used. Apple doesn't report which codes were actually accepted, so that part can't be confirmed.
 
 ---
 
@@ -62,7 +62,7 @@ The codes themselves are never stored in this repo.
 8. Push this repo and turn on GitHub Pages (Settings, Pages, deploy from `main`, root). The `CNAME` file sets the custom domain.
 9. Add a DNS CNAME for your subdomain pointing to `<you>.github.io`, then tick Enforce HTTPS in Pages.
 
-**Checking usage:** `https://<worker-url>/status?key=ADMIN_KEY` returns `{"free":N,"given":N,"bad":N}`.
+**Checking usage:** `https://<worker-url>/status?key=ADMIN_KEY` returns `{"free":N,"given":N,"redeemed":N,"bad":N}`. "given" is shown and held for one person; "redeemed" is when they tapped Redeem. Apple confirms neither.
 
 **Adding more codes:** append to `codes.txt`, re-run `make-seed.py` and the `d1 execute ... seed.sql` command. Existing codes are ignored.
 

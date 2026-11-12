@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS codes (
   code TEXT PRIMARY KEY,
-  status TEXT NOT NULL DEFAULT 'free',   -- free | given | bad
+  status TEXT NOT NULL DEFAULT 'free',   -- free | given (shown, held for one browser) | redeemed (tapped Redeem) | bad
   token TEXT,                            -- browser that was given it
   given_at INTEGER
 );
