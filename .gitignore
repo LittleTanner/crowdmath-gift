@@ -1,0 +1,5 @@
+codes.txt
+seed.sql
+node_modules/
+.wrangler/
+.dev.vars
