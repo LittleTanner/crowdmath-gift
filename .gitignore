@@ -3,3 +3,4 @@ seed.sql
 node_modules/
 .wrangler/
 .dev.vars
+admin-key.txt
