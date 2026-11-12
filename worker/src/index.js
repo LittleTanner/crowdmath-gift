@@ -63,7 +63,7 @@ export default {
 
     if (url.pathname === "/claim") {
       // Same browser asking again gets the code it already has.
-      const have = await db.prepare("SELECT code FROM codes WHERE token=?1 AND status='given' ORDER BY given_at DESC LIMIT 1").bind(token).first();
+      const have = await db.prepare("SELECT code FROM codes WHERE token=?1 AND status IN ('given','redeemed') ORDER BY given_at DESC LIMIT 1").bind(token).first();
       if (have) return json({ code: have.code }, 200, cors);
       if (await overIpLimit(db, request)) return json({ error: "limit" }, 429, cors);
       const code = await take(db, token);
@@ -75,9 +75,16 @@ export default {
       if (used.n >= MAX_PER_TOKEN) return json({ error: "limit" }, 429, cors);
       if (await overIpLimit(db, request)) return json({ error: "limit" }, 429, cors);
       // Retire the code that did not work (only if it was this browser's), then hand out a fresh one.
-      await db.prepare("UPDATE codes SET status='bad' WHERE code=?1 AND token=?2 AND status='given'").bind(String(body.code || ""), token).run();
+      await db.prepare("UPDATE codes SET status='bad' WHERE code=?1 AND token=?2 AND status IN ('given','redeemed')").bind(String(body.code || ""), token).run();
       const code = await take(db, token);
       return code ? json({ code }, 200, cors) : json({ error: "out" }, 503, cors);
+    }
+
+    // The visitor tapped "Redeem in the App Store". Showing a code only holds it for them (given);
+    // this tap is what counts it as used (redeemed). Still not proof Apple accepted it.
+    if (url.pathname === "/redeem") {
+      await db.prepare("UPDATE codes SET status='redeemed' WHERE code=?1 AND token=?2 AND status='given'").bind(String(body.code || ""), token).run();
+      return json({ ok: true }, 200, cors);
     }
 
     return json({ error: "no" }, 404, cors);
