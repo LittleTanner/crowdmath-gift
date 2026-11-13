@@ -177,6 +177,21 @@ pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 500 0.88r
   @keyframes bobc { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg) translateY(-2px); } }
 }
 
+/* After the code shows, Redeem is the one obvious next step: bigger, glowing, with an arrow pointing at it. Try another is demoted to ghost. */
+.cta { display: grid; gap: 6px; justify-items: stretch; }
+.point { justify-self: center; color: var(--lane); line-height: 0; }
+.cta-btn { font-size: 1.15rem; padding: 18px 20px; border-radius: 14px; box-shadow: 0 6px 18px color-mix(in srgb, var(--lane) 40%, transparent); }
+.retry { background: transparent; border: 0; padding: 4px 0 0; gap: 6px; justify-items: center; }
+.retry-text { font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+.retry .btn { padding: 9px 16px; font-size: 0.9rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .point { animation: nudge 1.1s ease-in-out infinite; }
+  .btn.cta-btn { animation: wiggle 3.2s ease-in-out infinite, ctaRing 1.8s ease-out infinite; }
+  .btn.cta-btn:hover { animation-play-state: paused; }
+  @keyframes nudge { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(6px); } }
+  @keyframes ctaRing { 0% { box-shadow: 0 6px 18px color-mix(in srgb, var(--lane) 40%, transparent), 0 0 0 0 color-mix(in srgb, var(--lane) 60%, transparent); } 70%, 100% { box-shadow: 0 6px 18px color-mix(in srgb, var(--lane) 40%, transparent), 0 0 0 16px transparent; } }
+}
+
 /* Compact hero so the top of the screenshots and the code pill are visible without scrolling on a phone. */
 .hero { padding-top: 30px; padding-bottom: 24px; }
 main { padding-top: 26px; }
@@ -269,14 +284,14 @@ a.link { color: var(--ink); font-weight: 600; }
           <div class="cp-stub"><b>FREE</b><s>$9.99</s></div>
           <i class="cp-notch t"></i><i class="cp-notch b"></i>
         </div>
-      <p class="redeem-how">Tap below. The App Store opens with your code filled in.</p>
-
-      <div class="btn-row">
-        <a class="btn" id="redeem" href="#" target="_blank" rel="noopener">Redeem in the App Store</a>
+      <div class="cta">
+        <p class="redeem-how">Tap the button. The App Store opens with your code filled in.</p>
+        <div class="point" aria-hidden="true"><svg viewBox="0 0 24 24" width="34" height="34"><path d="M12 3v15m0 0l-6-6m6 6l6-6" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <a class="btn shine cta-btn" id="redeem" href="#" target="_blank" rel="noopener">Redeem in the App Store</a>
       </div>
       <div class="retry">
-        <p class="retry-text">Already used?</p>
-        <button class="btn" id="next" type="button">Try another code</button>
+        <p class="retry-text">Already used this code?</p>
+        <button class="btn ghost" id="next" type="button">Try another code</button>
       </div>
       <p class="small" id="err" hidden></p>
       <p class="small">Nothing unlocked? Close and reopen the app once.</p>
@@ -383,6 +398,7 @@ a.link { color: var(--ink); font-weight: 600; }
     if (animate) {
       el.classList.remove("reveal"); void el.offsetWidth; el.classList.add("reveal");
       scramble(el, code); confetti();
+      setTimeout(function () { try { $("redeem").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" }); } catch (e) {} }, 900);
     } else { el.textContent = code; }
   }
   // Tapping Redeem is what counts a code as used. Fire and forget so the App Store link is never delayed.
