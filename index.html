@@ -192,6 +192,23 @@ pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 500 0.88r
   @keyframes ctaRing { 0% { box-shadow: 0 6px 18px color-mix(in srgb, var(--lane) 40%, transparent), 0 0 0 0 color-mix(in srgb, var(--lane) 60%, transparent); } 70%, 100% { box-shadow: 0 6px 18px color-mix(in srgb, var(--lane) 40%, transparent), 0 0 0 16px transparent; } }
 }
 
+/* Troubleshooting under the code: collapsed rows so the Redeem button stays the one obvious thing. */
+.help { display: grid; gap: 8px; margin-top: 6px; }
+.help > p { margin: 0; }
+details.tip { border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+details.tip summary { cursor: pointer; padding: 13px 14px; font-weight: 700; font-size: .95rem; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+details.tip summary::-webkit-details-marker { display: none; }
+details.tip summary::after { content: "+"; color: var(--lane); font-weight: 800; }
+details.tip[open] summary::after { content: "\2212"; }
+.tip-body { padding: 0 14px 14px; display: grid; gap: 12px; font-size: .95rem; line-height: 1.5; }
+.tip-body p { margin: 0; }
+.tsteps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: t; }
+.tsteps li { display: grid; gap: 8px; align-content: start; font-size: .85rem; line-height: 1.35; counter-increment: t; }
+.tsteps li > span::before { content: counter(t) ". "; font-weight: 800; color: var(--lane); }
+.tsteps img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); display: block; }
+.stuck { font-size: .95rem; margin: 4px 0 0; }
+.stuck a, footer a { color: var(--lane); font-weight: 700; }
+
 /* Compact hero so the top of the screenshots and the code pill are visible without scrolling on a phone. */
 .hero { padding-top: 30px; padding-bottom: 24px; }
 main { padding-top: 26px; }
@@ -294,7 +311,25 @@ a.link { color: var(--ink); font-weight: 600; }
         <button class="btn ghost" id="next" type="button">Try another code</button>
       </div>
       <p class="small" id="err" hidden></p>
-      <p class="small">Nothing unlocked? Close and reopen the app once.</p>
+      <div class="help">
+        <p class="small"><strong>Nothing unlocked?</strong> Close and reopen the app once. Still locked? Try these:</p>
+        <details class="tip" open><summary>I got Crowd Math from TestFlight</summary><div class="tip-body">
+          <p>The TestFlight version can't see a code redeemed in the App Store. Delete it and install the App Store version, then reopen it.</p>
+          <a class="btn ghost" href="https://apps.apple.com/app/id6823801158" target="_blank" rel="noopener">Open Crowd Math in the App Store</a>
+          <p class="small">Your progress comes back if iCloud is on for Crowd Math. If you are not sure, ask me first.</p></div></details>
+        <details class="tip"><summary>Purchase didn't unlock</summary><div class="tip-body">
+          <ol class="tsteps">
+            <li><a href="assets/help-1.jpg" target="_blank" rel="noopener"><img src="assets/help-1.jpg" alt="Crowd Math home screen with the gear button in the top right circled" loading="lazy"></a><span>On the home screen, tap the gear in the top right to open <b>Settings</b>.</span></li>
+            <li><a href="assets/help-2.jpg" target="_blank" rel="noopener"><img src="assets/help-2.jpg" alt="Settings with the Unlock everything row circled" loading="lazy"></a><span>Tap <b>Unlock everything</b>.</span></li>
+            <li><a href="assets/help-3.jpg" target="_blank" rel="noopener"><img src="assets/help-3.jpg" alt="Unlock screen with Restore purchase circled at the bottom left" loading="lazy"></a><span>Tap <b>Restore purchase</b> at the bottom left. It needs an internet connection.</span></li>
+          </ol></div></details>
+        <details class="tip"><summary>The App Store didn't fill in my code</summary><div class="tip-body">
+          <p>Copy your code, then open the App Store, tap your profile picture, tap <b>Redeem Gift Card or Code</b>, and paste it in.</p>
+          <button class="btn ghost" id="copy" type="button">Copy my code</button></div></details>
+        <details class="tip"><summary>Something else</summary><div class="tip-body">
+          <p>Crowd Math needs iOS 26. Offer codes only work in countries where the App Store lists the app. Redeeming needs an internet connection.</p></div></details>
+        <p class="stuck">Still stuck? Text me or email <a href="mailto:support@squeakbyte.com">support@squeakbyte.com</a> and I will sort it out &#128578;</p>
+      </div>
     </div>
   </section>
 
@@ -304,7 +339,7 @@ a.link { color: var(--ink); font-weight: 600; }
     <div class="btn-row"><a class="btn" href="https://apps.apple.com/app/id6823801158" target="_blank" rel="noopener">See Crowd Math on the App Store</a></div>
   </section>
 
-  <footer class="small">Crowd Math by Kevin Tanner. Questions: text me or support@squeakbyte.com</footer>
+  <footer class="small">Crowd Math by Kevin Tanner. Questions: text me or <a href="mailto:support@squeakbyte.com">support@squeakbyte.com</a></footer>
 </main>
 
 <script>
@@ -405,6 +440,13 @@ a.link { color: var(--ink); font-weight: 600; }
   $("redeem").addEventListener("click", function () {
     if (!state || !state.code) return;
     try { fetch(API + "/redeem", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: state.token, code: state.code }) }); } catch (e) {}
+  });
+  $("copy").addEventListener("click", function () {
+    var b = this, c = state && state.code;
+    if (!c) return;
+    function done(t) { b.textContent = t; setTimeout(function () { b.textContent = "Copy my code"; }, 2000); }
+    try { navigator.clipboard.writeText(c).then(function () { done("Copied"); }, function () { done("Press and hold the code to copy"); }); }
+    catch (e) { done("Press and hold the code to copy"); }
   });
   $("form").addEventListener("submit", function (e) {
     e.preventDefault();
