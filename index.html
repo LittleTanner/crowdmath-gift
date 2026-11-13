@@ -202,10 +202,11 @@ details.tip summary::after { content: "+"; color: var(--lane); font-weight: 800;
 details.tip[open] summary::after { content: "\2212"; }
 .tip-body { padding: 0 14px 14px; display: grid; gap: 12px; font-size: .95rem; line-height: 1.5; }
 .tip-body p { margin: 0; }
-.tsteps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: t; }
-.tsteps li { display: grid; gap: 8px; align-content: start; font-size: .85rem; line-height: 1.35; counter-increment: t; }
+.tsteps { display: flex; gap: 12px; margin: 0 -14px; padding: 0 14px 8px; list-style: none; counter-reset: t; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 14px; -webkit-overflow-scrolling: touch; }
+.tsteps li { flex: 0 0 78%; scroll-snap-align: start; display: grid; gap: 10px; align-content: start; font-size: .95rem; line-height: 1.4; counter-increment: t; }
 .tsteps li > span::before { content: counter(t) ". "; font-weight: 800; color: var(--lane); }
-.tsteps img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); display: block; }
+.tsteps img { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); display: block; }
+.swipe-hint { font-size: .8rem; color: var(--muted); margin: -4px 0 0; }
 .stuck { font-size: .95rem; margin: 4px 0 0; }
 .stuck a, footer a { color: var(--lane); font-weight: 700; }
 
@@ -318,16 +319,20 @@ a.link { color: var(--ink); font-weight: 600; }
           <a class="btn ghost" href="https://apps.apple.com/app/id6823801158" target="_blank" rel="noopener">Open Crowd Math in the App Store</a>
           <p class="small">Your progress comes back if iCloud is on for Crowd Math. If you are not sure, ask me first.</p></div></details>
         <details class="tip"><summary>Purchase didn't unlock</summary><div class="tip-body">
-          <ol class="tsteps">
-            <li><a href="assets/help-1.jpg" target="_blank" rel="noopener"><img src="assets/help-1.jpg" alt="Crowd Math home screen with the gear button in the top right circled" loading="lazy"></a><span>On the home screen, tap the gear in the top right to open <b>Settings</b>.</span></li>
-            <li><a href="assets/help-2.jpg" target="_blank" rel="noopener"><img src="assets/help-2.jpg" alt="Settings with the Unlock everything row circled" loading="lazy"></a><span>Tap <b>Unlock everything</b>.</span></li>
-            <li><a href="assets/help-3.jpg" target="_blank" rel="noopener"><img src="assets/help-3.jpg" alt="Unlock screen with Restore purchase circled at the bottom left" loading="lazy"></a><span>Tap <b>Restore purchase</b> at the bottom left. It needs an internet connection.</span></li>
+          <p class="swipe-hint">Swipe to see each step</p>
+          <ol class="tsteps" tabindex="0" aria-label="Steps to restore your purchase">
+            <li><img src="assets/help-1.jpg" alt="Crowd Math home screen with the gear button in the top right circled"><span>On the home screen, tap the gear in the top right to open <b>Settings</b>.</span></li>
+            <li><img src="assets/help-2.jpg" alt="Settings with the Unlock everything row circled"><span>Tap <b>Unlock everything</b>.</span></li>
+            <li><img src="assets/help-3.jpg" alt="Unlock screen with Restore purchase circled at the bottom left"><span>Tap <b>Restore purchase</b> at the bottom left. It needs an internet connection.</span></li>
           </ol></div></details>
         <details class="tip"><summary>The App Store didn't fill in my code</summary><div class="tip-body">
           <p>Copy your code, then open the App Store, tap your profile picture, tap <b>Redeem Gift Card or Code</b>, and paste it in.</p>
           <button class="btn ghost" id="copy" type="button">Copy my code</button></div></details>
+        <details class="tip"><summary>My code expired</summary><div class="tip-body">
+          <p>Missed the deadline for redeeming the code in time? Text or email me and I can add some more codes.</p>
+          <a class="btn ghost" href="mailto:support@squeakbyte.com?subject=Crowd%20Math%20code%20expired">Email me</a></div></details>
         <details class="tip"><summary>Something else</summary><div class="tip-body">
-          <p>Crowd Math needs iOS 26. Offer codes only work in countries where the App Store lists the app. Redeeming needs an internet connection.</p></div></details>
+          <p>Codes are only valid until <b>November 30</b>. They only work in the United States, and you need to be on iOS 26 or later with an internet connection.</p></div></details>
         <p class="stuck">Still stuck? Text me or email <a href="mailto:support@squeakbyte.com">support@squeakbyte.com</a> and I will sort it out &#128578;</p>
       </div>
     </div>
